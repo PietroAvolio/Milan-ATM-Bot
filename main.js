@@ -179,6 +179,7 @@ function handleMessage(text, messageObject){
 
 function handleCallbackQuery(callbackQueryObject){
 	var chat_id = callbackQueryObject.message.chat.id;
+	console.log(logPrefix + "Callback query /w value " + callbackQueryObject.data + " in chat " + callbackQueryObject.message.chat.id);
 	
 	if(pendingForCommandParam[chat_id.toString()] !== undefined){
 		messageToPendingCommand(callbackQueryObject.data, pendingForCommandParam[chat_id.toString()], callbackQueryObject.message, true);

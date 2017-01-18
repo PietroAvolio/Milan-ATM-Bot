@@ -1,10 +1,11 @@
-const _cfg_telegramToken = '304767666:AAGP_OTHPxFod34bjK79NRilp_wDSjPITRw';
-const _cfg_twitterToken = 'AAAAAAAAAAAAAAAAAAAAAJf%2BygAAAAAAfFJd1AgjiwydGbCYHGxDQlSZDzU%3Dq77qpsqwd2UsD0BO2uYKQnk2ScJrzIjoGWWiTeoHPMsVVEYbDr';
+const _cfg_telegramToken = '';
+const _cfg_twitterToken = '';
+
 const _cfg_mysql = {
-	host     : 'localhost',
-	user     : 'root',
-	password : 'ptr',
-	database : 'atmbot'
+	host     : '',
+	user     : '',
+	password : '',
+	database : ''
 };
 
 module.exports = {
