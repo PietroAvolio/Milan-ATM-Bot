@@ -60,7 +60,7 @@ function fetchTweets(callback){
 			}
 				
 		}else{
-			console.log(logPrefix +  "Error while retrieving messages.\n" + error + "\nResponse: " + response + "\nBody: " +  body);
+			console.log(logPrefix +  "Error while retrieving tweets.\n" + error + "\nResponse: " + response + "\nBody: " +  body);
 		}
 		
 		if(callback != undefined){

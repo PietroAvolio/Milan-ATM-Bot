@@ -1,6 +1,6 @@
 /** GLOBAL VARIABLES DECLARATIONS **/
 const logPrefix = "[MAIN] ";
-const botVersion = "1.0";
+const botVersion = "1.2";
 
 const childProcess = require("child_process");
 const telegramSender = require("./telegram-sender.js");
@@ -56,6 +56,11 @@ function onTelegramUpdate(data){
 function handleMessage(text, messageObject){
 	var chat_id = messageObject.chat.id;
 	
+	if(text === undefined){
+		//Maybe we received a sticker or something else :)
+		return;
+	}
+	
 	if(text.charAt(0) === '/'){
 		//Received new command
 		switch(text){
@@ -110,7 +115,7 @@ function handleMessage(text, messageObject){
 						messageText = "Select the line for which you don't want to receive notifications anymore";
 					}else{
 						inlineKeyboardKeys = undefined;
-						messageText = "You didn't enabled notifications for any line yet";
+						messageText = "You didn't enable notifications for any line yet";
 					}
 					
 					telegramSender.plainTextResponse(messageText, chat_id, inlineKeyboardKeys);
@@ -140,7 +145,7 @@ function handleMessage(text, messageObject){
 				
 			case "/info":
 				mysql.doQuery("SELECT count(*) AS count FROM users", function(error, results, fields){
-					telegramSender.plainTextResponse("I'm glad you're here! 😍\n\nThis bot was developed by Pietro Avolio (http://fb.me/pietro.avolio) and served so far " + results[0].count + " users.\n\nIf you find it usefull, why don't you buy me a coffee? https://www.paypal.me/dreamerspillow \n\n⚠️️ Please notice that this bot is totally unofficial and it is not related to Azienda Trasporti Milanesi S.p.A in any way", chat_id);
+					telegramSender.plainTextResponse("<b>Telegram ATM Bot v" + botVersion + "</b>\n\nI'm glad you're here! 😍\n\nThis bot was developed by Pietro Avolio (http://fb.me/pietro.avolio) and served " + results[0].count + " users so far.\n\nWhy don't you buy me a coffee if you find it useful? https://www.paypal.me/dreamerspillow \n\n⚠️️ Please notice that this bot is totally unofficial and it is not related to Azienda Trasporti Milanesi S.p.A in any way", chat_id);
 				});
 				break;
 				
@@ -213,8 +218,8 @@ function messageToPendingCommand(text, command, messageObject, fromCallbackQuery
 		case "/stopinfo":
 			atmCrawler.searchStop(text, function(response){
 				
-				if(response.length == 0){
-					telegramSender.plainTextResponse("I can't find any stop for 🤔" + text + " ", chat_id);
+				if(response === undefined || response.length == 0){
+					telegramSender.plainTextResponse("I can't find any stop for " + text + " 🤔", chat_id);
 					
 				}else if(response.length == 1){
 					atmCrawler.stopIdFromStopCode(text, function(stopId){
@@ -246,7 +251,7 @@ function messageToPendingCommand(text, command, messageObject, fromCallbackQuery
 						});
 					});
 				}else{
-					telegramSender.plainTextResponse("I can't find any stop with code " + text, chat_id);
+					telegramSender.plainTextResponse("I can't find any stop with code " + text + " 🤔", chat_id);
 				}
 			});
 			break;
@@ -307,7 +312,7 @@ function buildStopInfoMessage(stopInfo){
 			break;
 	}
 	
-	str = str.concat(stopInfo.Description + " (Code " + stopInfo.CustomerCode + ")\n\n");
+	str = str.concat(stopInfo.Description + " (Code <i>" + stopInfo.CustomerCode + "</i>)\n\n");
 	for(var i = 0; i < stopInfo.Lines.length; i++){
 		var l = stopInfo.Lines[i].Line;
 	

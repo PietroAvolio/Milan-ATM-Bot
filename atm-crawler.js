@@ -3,7 +3,7 @@ const logPrefix = "[ATM-CRW] ";
 
 module.exports = {
 	searchStop: function(key, callback){
-		searchLine(key, callback);
+		searchStop(key, callback);
 	},
 	
 	stopIdFromStopCode: function(key, callback){
@@ -15,7 +15,7 @@ module.exports = {
 	}
 };
 
-function searchLine(key, callback){
+function searchStop(key, callback){
 	request.post({
 		headers: {'content-type' : 'application/x-www-form-urlencoded'},
 		url:     'http://giromilano.atm.it/proxy.ashx',
@@ -27,17 +27,18 @@ function searchLine(key, callback){
 			}
 			
 		}else{
+			callback(undefined);
 			console.log(logPrefix +  "Error while contacting ATM APIs.\n" + error + "\nResponse: " + response + "\nBody: " +  body);
 		}
 	});
 }
 
 function getStopId(key, callback){
-	searchLine(key, function(res){
-		if(res.length == 1){
+	searchStop(key, function(res){
+		if(res !== undefined && res.length == 1){
 			callback(res[0].Code);
 		}else{
-			callback[undefined];
+			callback(undefined);
 		}
 	});
 }

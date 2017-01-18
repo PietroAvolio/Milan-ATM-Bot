@@ -8,7 +8,7 @@ module.exports = {
 	//TODO HANDLE NOT MORE VALID CHAT ID
 	
 	plainTextResponse: function(text, chatId, inlineKeyboardButtons){ //[[{'text': 'A', 'callback_data': '12'}]]
-		var requestUrl = 'https://api.telegram.org/bot' + telegramToken + '/sendMessage?chat_id=' + chatId + '&text=' + encodeURIComponent(text);
+		var requestUrl = 'https://api.telegram.org/bot' + telegramToken + '/sendMessage?chat_id=' + chatId + '&disable_web_page_preview=true&parse_mode=HTML&text=' + encodeURIComponent(text);
 		
 		if(inlineKeyboardButtons !== undefined){
 			var ikb = {"inline_keyboard": inlineKeyboardButtons};
