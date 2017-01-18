@@ -1,5 +1,6 @@
 # Milan-ATM-Bot
-NodeJS implementation of a Telegram Bot providing services for the ATM transportation company in Milan (Italy)
+NodeJS implementation of a Telegram Bot providing services for the ATM transportation company in Milan (Italy).
+Currently running on http://www.tg.me/@MilanAtmBot
 
 ## How it works
 It merges information provided by [@ATMTravelAlerts](https://twitter.com/ATMTravelAlerts) and available on the [ATM website](http://www.atm.it) in one telegram chat.
