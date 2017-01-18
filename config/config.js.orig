@@ -1,6 +1,9 @@
 const _cfg_telegramToken = '';
 const _cfg_twitterToken = '';
+<<<<<<< HEAD
 
+=======
+>>>>>>> c2c34a41a136f08989b2739ec33d3fb583a2c9b2
 const _cfg_mysql = {
 	host     : '',
 	user     : '',
