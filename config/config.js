@@ -1,5 +1,5 @@
-const _cfg_telegramToken = '304767666:AAHv90ZZy5dncO9ZARRvGF8gl6RnpRtk8RE';
-const _cfg_twitterToken = 'AAAAAAAAAAAAAAAAAAAAAJf%2BygAAAAAAEx7H%2FXyB88rFLUgonDj%2FlcnFAQo%3DwF3MNzra463dyqj51ILsnv22WymT8aLDUYT9EBQ9fAM36ysFrR';
+const _cfg_telegramToken = '';
+const _cfg_twitterToken = '';
 
 const _cfg_mysql = {
 	host     : 'localhost',
