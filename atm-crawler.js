@@ -28,7 +28,9 @@ function searchStop(key, callback){
 			
 		}else{
 			callback(undefined);
-			console.log(logPrefix +  "Error while contacting ATM APIs.\n" + error + "\nResponse: " + response + "\nBody: " +  body);
+			if(response.statusCode != 404){
+				console.log(logPrefix +  "Error while contacting ATM APIs.\n" + error + "\nResponse: " + response.statusCode + "\nBody: " +  body);
+			}
 		}
 	});
 }
@@ -54,10 +56,12 @@ function getStopInfo(id, callback){
 				parseStopInfo(JSON.parse(body), callback);
 			}
 		}else{
-			console.log(logPrefix +  "Error while contacting ATM APIs.\n" + error + "\nResponse: " + response + "\nBody: " +  body);
-			
 			if(callback !== undefined){
 				callback(undefined);
+			}
+			
+			if(response.statusCode != 404){
+				console.log(logPrefix +  "Error while contacting ATM APIs.\n" + error + "\nResponse: " + response.statusCode + "\nBody: " +  body);
 			}
 		}
 	});
