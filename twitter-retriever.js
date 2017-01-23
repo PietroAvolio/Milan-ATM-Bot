@@ -70,7 +70,8 @@ function fetchTweets(callback){
 }
 
 function parseTweet(tweet){
-	var cleanText = tweet.text.replace(/ #\w+,|#\w+,| #\w+|#\w+|: |/g, "").replace(/&gt;/g, "direction").trim();
+	var cleanText = tweet.text.replace(/(#ATM|#Milan|#)/g, "").replace(/&gt;/g, "direction").trim();
+	cleanText = cleanText.replace(/(bus|tram)(\d+)/g, "$1 $2");
 	
 	for(var i = 0; i < tweet.entities.hashtags.length; i++){
 		var hashtag = tweet.entities.hashtags[i];

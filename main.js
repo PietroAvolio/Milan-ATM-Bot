@@ -1,6 +1,6 @@
 /** GLOBAL VARIABLES DECLARATIONS **/
 const logPrefix = "[MAIN] ";
-const botVersion = "1.2";
+const botVersion = "1.3";
 
 const childProcess = require("child_process");
 const telegramSender = require("./telegram-sender.js");
@@ -64,20 +64,15 @@ function handleMessage(text, messageObject){
 	if(text.charAt(0) === '/'){
 		//Received new command
 		switch(text){
-			case "/notify":
-				mysql.doQuery("INSERT INTO users_botready_notifications VALUES(" + messageObject.from.id + ")");
-				telegramSender.plainTextResponse("Ok dude, we will notify you as soon as the BOT will be ready ðŸ˜Ž", chat_id);
-				break;
-				
 			case "/status":
-				mysql.doQuery("SELECT line_sought, count(*) as times FROM users_lines_searches WHERE user_id = " + messageObject.from.id + " GROUP BY line_sought ORDER BY times DESC LIMIT 4", function(error, results, fields){
+				mysql.doQuery("SELECT line-number, count(*) as times FROM users_lines_searches WHERE user-id = " + messageObject.from.id + " GROUP BY line-number ORDER BY times DESC LIMIT 4", function(error, results, fields){
 					var inlineKeyboardKeys = [[]];
 					var messageText;
 					
 					if(results.length > 0){
 						messageText = "Type the number of the line you want to check or click one of the lines you search the most";
 						for(var i = 0; i < results.length; i++){
-							inlineKeyboardKeys[0].push( {"text": results[i].line_sought.toString(), "callback_data": results[i].line_sought.toString()} );
+							inlineKeyboardKeys[0].push( {"text": results[i].line-number.toString(), "callback_data": results[i].line-number.toString()} );
 						}
 					}else{
 						messageText = "Type the number of the line you want to check";
@@ -94,7 +89,7 @@ function handleMessage(text, messageObject){
 				telegramSender.plainTextResponse("/status - Information about a transportation line\n/enablenotifications - Enable notifications for a transporation line\n/stopinfo - Get lines and wait times for a stop\n/disablenotifications - Disable notifications for a transportation line\n/unsavestop - Remove a stop from your saved ones\n/help - Detailed description of the available commands\n/info - Information about this bot", chat_id);
 				
 				if(text == "/start"){
-					mysql.doQuery("INSERT INTO users(userid) VALUES(" + messageObject.from.id + ")");
+					mysql.doQuery("INSERT INTO users(user-id) VALUES(" + messageObject.from.id + ")");
 				}
 				break;
 				
@@ -104,13 +99,13 @@ function handleMessage(text, messageObject){
 				break;
 				
 			case "/disablenotifications":
-				mysql.doQuery("SELECT line FROM users_lines_notifications WHERE userid = " + messageObject.from.id + " ORDER BY line DESC", function(error, results, fields){
+				mysql.doQuery("SELECT line-number FROM users_lines_notifications WHERE user-id = " + messageObject.from.id + " ORDER BY line-number DESC", function(error, results, fields){
 					var messageText;
 					var inlineKeyboardKeys = [[]];
 					
 					if(results.length > 0){
 						for(var i = 0; i < results.length; i++){
-							inlineKeyboardKeys[0].push({ "text": results[i].line, "callback_data": results[i].line });
+							inlineKeyboardKeys[0].push({ "text": results[i].line-number, "callback_data": results[i].line-number });
 						}
 						messageText = "Select the line for which you don't want to receive notifications anymore";
 					}else{
@@ -127,12 +122,12 @@ function handleMessage(text, messageObject){
 				var messageText;
 				var inlineKeyboardKeys;
 				
-				mysql.doQuery("SELECT stopNumber, stopDescription FROM users_saved_stops WHERE userid = " + messageObject.from.id, function(error, results, fields){
+				mysql.doQuery("SELECT stop-number, description FROM users_saved_stops WHERE user-id = " + messageObject.from.id, function(error, results, fields){
 					if(results.length > 0){
 						messageText = "Type the address or the code of a stop, or pick one of your ❤️️ saved stops";
 						inlineKeyboardKeys = [];
 						for(var i = 0; i < results.length; i++){
-							inlineKeyboardKeys.push([{text: results[i].stopDescription, callback_data: results[i].stopNumber.toString()}]);
+							inlineKeyboardKeys.push([{text: results[i].description, callback_data: results[i].stop-number.toString()}]);
 						}
 					}else{
 						messageText = "Type the address of the stop or its code";
@@ -150,11 +145,11 @@ function handleMessage(text, messageObject){
 				break;
 				
 			case "/unsavestop":
-				mysql.doQuery("SELECT * FROM users_saved_stops WHERE userid = " + messageObject.from.id + "", function(error, results, fields){
+				mysql.doQuery("SELECT * FROM users_saved_stops WHERE user-id = " + messageObject.from.id + "", function(error, results, fields){
 						if(results.length > 0){
 							var inlineKeyboardKeys = [];
 							for(var i = 0; i < results.length; i++){
-								inlineKeyboardKeys.push( [{'text': results[i].stopDescription, 'callback_data': results[i].stopId.toString()}] );
+								inlineKeyboardKeys.push( [{'text': results[i].description, 'callback_data': results[i].stop-id.toString()}] );
 							}
 							
 							telegramSender.plainTextResponse("Select the stop you want to remove from your saved stops", chat_id, inlineKeyboardKeys);
@@ -199,11 +194,11 @@ function messageToPendingCommand(text, command, messageObject, fromCallbackQuery
 	switch(command){
 		case "/status":
 			telegramSender.plainTextResponse(atmStatus.getInfo(text), chat_id);
-			mysql.doQuery("INSERT INTO users_lines_searches (user_id, line_sought) VALUES(" + sender_id + ", '" + text + "')");
+			mysql.doQuery("INSERT INTO users_lines_searches (user-id, line-number) VALUES(" + sender_id + ", '" + text + "')");
 			break;
 		
 		case "/enablenotifications":
-			mysql.doQuery("INSERT INTO users_lines_notifications(userid, line) VALUES(" + sender_id + ", '" + text + "')", function(error, results, fields){
+			mysql.doQuery("INSERT INTO users_lines_notifications(user-id, line-number) VALUES(" + sender_id + ", '" + text + "')", function(error, results, fields){
 				if(!error){
 					telegramSender.plainTextResponse("You will be notified if something happens on line " + text + " 😏\n\nPlease take into account that this service is based on ATM Travel Alerts on twitter and it will be available only Mon-Fri 7am-8pm 😬", chat_id);
 				}
@@ -211,7 +206,7 @@ function messageToPendingCommand(text, command, messageObject, fromCallbackQuery
 			break;
 		
 		case "/disablenotifications":
-			mysql.doQuery("DELETE FROM users_lines_notifications WHERE userid = " + sender_id + " AND line = '" + text + "'", function(error, results, fields){
+			mysql.doQuery("DELETE FROM users_lines_notifications WHERE user-id = " + sender_id + " AND line-number = '" + text + "'", function(error, results, fields){
 				telegramSender.plainTextResponse("Ok, you will not receive notifications for line " + text + " anymore 👍", chat_id);
 			});
 			break;
@@ -265,7 +260,7 @@ function messageToPendingCommand(text, command, messageObject, fromCallbackQuery
 						stopDescription = stopDescription.concat(res.Lines[i].Line.LineCode + " ");
 					}
 					
-					mysql.doQuery("INSERT INTO users_saved_stops(userid, stopid, stopNumber, stopDescription) VALUES(" + sender_id + ", " + text + ", " + res.CustomerCode + ", '" + stopDescription + "')", function(error, results, fields){
+					mysql.doQuery("INSERT INTO users_saved_stops(user-id, stop-id, stop-number, description) VALUES(" + sender_id + ", " + text + ", " + res.CustomerCode + ", '" + stopDescription + "')", function(error, results, fields){
 						telegramSender.plainTextResponse("Stop saved 👍", chat_id);
 					});
 				}
@@ -273,7 +268,7 @@ function messageToPendingCommand(text, command, messageObject, fromCallbackQuery
 			break;
 			
 		case "/unsavestop":
-			mysql.doQuery("DELETE FROM users_saved_stops WHERE userid = " + sender_id + " AND stopId = " + text + " LIMIT 1", function(error, results, fields){
+			mysql.doQuery("DELETE FROM users_saved_stops WHERE user-id = " + sender_id + " AND sto-id = " + text + " LIMIT 1", function(error, results, fields){
 				telegramSender.plainTextResponse("Stop unsaved 👍", chat_id);
 			});
 			break;
@@ -285,9 +280,9 @@ function messageToPendingCommand(text, command, messageObject, fromCallbackQuery
 }
 
 function sendNotifications(line){
-	mysql.doQuery("SELECT userid FROM users_lines_notifications WHERE line = '" + line + "'", function(error, results, fields){
+	mysql.doQuery("SELECT user-id FROM users_lines_notifications WHERE line-number = '" + line + "'", function(error, results, fields){
 		for(var i = 0; i < results.length; i++){
-			telegramSender.plainTextResponse(atmStatus.getInfo(line), results[i].userid);
+			telegramSender.plainTextResponse(atmStatus.getInfo(line-id), results[i].user-id);
 		}
 	});
 }
@@ -331,7 +326,7 @@ function buildStopInfoMessage(stopInfo){
 }
 
 function buildStopInlineKeyboardKeys(caller_id, stop_id, callback){
-	mysql.doQuery("SELECT * FROM users_saved_stops WHERE userid = " + caller_id + " AND stopId = " + stop_id + " LIMIT 1", function(error, results, fields){
+	mysql.doQuery("SELECT * FROM users_saved_stops WHERE user-id = " + caller_id + " AND stop-id = " + stop_id + " LIMIT 1", function(error, results, fields){
 		if(results.length != 0){
 			callback(undefined);
 		}else{
