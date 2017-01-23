@@ -221,6 +221,7 @@ function messageToPendingCommand(text, command, messageObject, fromCallbackQuery
 					telegramSender.plainTextResponse("I can't find any stop for " + text + " 🤔", chat_id);
 					
 				}else if(response.length == 1){
+					
 					atmCrawler.stopIdFromStopCode(text, function(stopId){
 						atmCrawler.stopInfo(stopId, function(res){
 							buildStopInlineKeyboardKeys(sender_id, stopId, function(inlineKeyboardKeys){
@@ -229,13 +230,20 @@ function messageToPendingCommand(text, command, messageObject, fromCallbackQuery
 							});
 						});
 					});
+					
 				}else{
+					
 					for(var i = 0; i < response.length; i++){	
-						telegramSender.plainTextResponse(buildStopInfoMessage(response[i]), chat_id);
+						if(response[i].Lines.length == 0){
+							continue;
+						}
+						
+						telegramSender.plainTextResponse(buildStopInfoMessage(response[i]), chat_id, [[{'text': encodeURIComponent('Select this stop ☝️️'), 'callback_data': response[i].CustomerCode.toString()}]]);
 					}
 					
-					telegramSender.plainTextResponse("👉 Type the code of one of the stops found 👈", chat_id);
+					telegramSender.plainTextResponse("👉 Select or type the code of one of the stops found 👈", chat_id);
 					pendingForCommandParam[chat_id.toString()] = "/stopinfo_2";
+					
 				}
 			});
 			break;
