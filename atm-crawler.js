@@ -81,7 +81,7 @@ function getStopInfo(id, callback){
 
 function parseStopInfo(stopInfo, callback){
 	//THIS IS AN AMAZING WORKAROUND!
-	int pendingCallbacks = 0;
+	var pendingCallbacks = 0;
 	for(var i = 0; i < jsonBody.Lines.length; i++){
 		var l = stopInfo.Lines[i];
 		
