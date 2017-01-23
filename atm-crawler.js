@@ -51,23 +51,7 @@ function getStopInfo(id, callback){
 	}, function(error, response, body){
 		if(!error && response.statusCode == 200){
 			if(callback !== undefined){
-				
-				var jsonBody = JSON.parse(body);
-				
-				for(var i = 0; i < jsonBody.Lines.length; i++){
-					var l = jsonBody.Lines[i];
-					
-					/*if(l.WaitMessage === null){
-						getLineTimetable(jsonBody.CustomerCode, l.Line.LineId, l.Direction, function(timetable){
-							l.WaitMessage = parseTimetable(timetable);
-							callback(jsonBody);
-						});
-					}else{
-						callback(jsonBody);
-					}*/ //TODO FIX THIS TO WORK WITH CALLBACKS!!
-					
-					callback(jsonBody);
-				}
+				parseStopInfo(JSON.parse(body), callback);
 			}
 		}else{
 			console.log(logPrefix +  "Error while contacting ATM APIs.\n" + error + "\nResponse: " + response + "\nBody: " +  body);
@@ -80,19 +64,18 @@ function getStopInfo(id, callback){
 }
 
 function parseStopInfo(stopInfo, callback){
-	//THIS IS AN AMAZING WORKAROUND!
 	var pendingCallbacks = 0;
-	for(var i = 0; i < jsonBody.Lines.length; i++){
+	for(var i = 0; i < stopInfo.Lines.length; i++){
 		var l = stopInfo.Lines[i];
 		
 		if(l.WaitMessage === null){
 			pendingCallbacks++;
-			getLineTimetable(jsonBody.CustomerCode, l.Line.LineId, l.Direction, function(timetable){
+			getLineTimetable(stopInfo.CustomerCode, l.Line.LineId, l.Direction, function(timetable){
 				l.WaitMessage = parseTimetable(timetable);
 				
 				pendingCallbacks--;
 				if(pendingCallbacks == 0){
-					callback(jsonBody);
+					callback(stopInfo);
 				}
 			});
 		}
@@ -114,12 +97,18 @@ function getLineTimetable(stopid, line, linedirection, callback){
 				callback(JSON.parse(body));
 			}
 		}else{
-			console.log(logPrefix +  "Error while contacting ATM APIs in getLineTimetable.\n" + error + "\nResponse: " + response + "\nBody: " +  body);
+			if(callback !== undefined){
+				callback(undefined);
+			}
 		}
 	});
 }
 
 function parseTimetable(timetable){
+	if(timetable === undefined){
+		return;
+	}
+	
 	var currDate = new Date();
 	var currDay = currDate.getDay();
 	var tt;
@@ -160,7 +149,7 @@ function getWaitingTimeFromSchedule(schedule, nextSchedule){
 	
 	schedule.ScheduleDetail.replace("*", '');
 	if( schedule.ScheduleDetail.startsWith("Ogni") ){
-		var interval = parseInt(scedule.ScheduleDetail.replace(/Ogni (\d+)'/, "$1")); 
+		var interval = parseInt(schedule.ScheduleDetail.replace(/Ogni (\d+)'/, "$1")); 
 		
 		for(var i = 1; i <= 15; i++){
 			var s = interval*i;
@@ -178,6 +167,7 @@ function getWaitingTimeFromSchedule(schedule, nextSchedule){
 	for(var i = 0; i < stopsAt.length; i++){
 		if( currMin < parseInt(stopsAt[i]) ){
 			waitingMinutes = parseInt(stopsAt[i]) - currMin;
+			break;
 		}
 	}
 	

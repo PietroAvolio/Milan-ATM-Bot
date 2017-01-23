@@ -8,6 +8,7 @@ const bearerToken = config.twitterToken;
 const mainIntervalDuration = 120000;
 var mainInterval;
 var lastTweetId = 0;
+var isStartup = true;
 
 process.on('message',function(msg){
 	this.start = function(){
@@ -78,7 +79,7 @@ function parseTweet(tweet){
 		
 		if(hashtag.text.startsWith("tram") || hashtag.text.startsWith("bus") || /N\d+|M\d/.test(hashtag)){
 			var line = hashtag.text.replace(/(bus|tram)/, "");
-			process.send({"line": line, "text": cleanText, "date": tweet.created_at});
+			process.send({"line": line, "text": cleanText, "date": tweet.created_at, "issue-notification": !isStartup});
 		}
 	}
 }
