@@ -151,11 +151,11 @@ function getWaitingTimeFromSchedule(schedule, nextSchedule){
 	var stopsAt = [];
 	var waitingMinutes;
 	
-	schedule.ScheduleDetail.replace("*", '');
+	schedule.ScheduleDetail = schedule.ScheduleDetail.replace("*", '');
 	if( schedule.ScheduleDetail.startsWith("Ogni") ){
 		var interval = parseInt(schedule.ScheduleDetail.replace(/Ogni (\d+)'/, "$1")); 
 		
-		for(var i = 1; i <= 15; i++){
+		for(var i = 0; i <= 15; i++){
 			var s = interval*i;
 			
 			if(s <= 60){
@@ -169,7 +169,7 @@ function getWaitingTimeFromSchedule(schedule, nextSchedule){
 	}
 	
 	for(var i = 0; i < stopsAt.length; i++){
-		if( currMin < parseInt(stopsAt[i]) ){
+		if( stopsAt[i] != "" && currMin < parseInt(stopsAt[i]) ){
 			waitingMinutes = parseInt(stopsAt[i]) - currMin;
 			break;
 		}
