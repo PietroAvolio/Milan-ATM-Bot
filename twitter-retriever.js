@@ -76,10 +76,12 @@ function parseTweet(tweet){
 	
 	for(var i = 0; i < tweet.entities.hashtags.length; i++){
 		var hashtag = tweet.entities.hashtags[i];
-		
-		if(hashtag.text.startsWith("tram") || hashtag.text.startsWith("bus") || /N\d+|M\d/.test(hashtag)){
+	
+		if(hashtag.text.startsWith("tram") || hashtag.text.startsWith("bus") || (new RegExp(/N\d+|M\d/)).test(hashtag)){
 			var line = hashtag.text.replace(/(bus|tram)/, "");
 			process.send({"line": line, "text": cleanText, "date": tweet.created_at, "issue-notification": !isStartup});
+		}else{
+			
 		}
 	}
 }
