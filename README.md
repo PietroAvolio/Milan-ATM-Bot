@@ -31,4 +31,4 @@ You need to link a mysql database into the /config/config.js file.
 See dump.sql for the database schema.
 
 ## License
-This project is distributed under the terms of the MIT License. See file "LICENSE" for further reference.
+This project is distributed under the terms of the DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE. See file "LICENSE" for further reference.
