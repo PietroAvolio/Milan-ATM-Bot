@@ -68,8 +68,10 @@ function onNewServiceUpdate(data){
 function onTelegramUpdate(data){
     if( data.message !== undefined && data.message.text !== undefined ){
         handleTelegramText(data);
+
     }else if( data.callback_query !== undefined ){
         handleTelegramCallbackQuery(data);
+
     }else{
         utils.makeLog("Unhandled Telegram update", logPrefix);
         console.log(data);
