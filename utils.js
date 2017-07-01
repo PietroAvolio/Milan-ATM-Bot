@@ -63,17 +63,17 @@ module.exports = {
             var lf = this.getLineFrequencyFromTimetable(stopdata.Lines[i].rTimetable);
 
             if(stopdata.Lines[i].WaitMessage !== undefined && stopdata.Lines[i].WaitMessage !== null){
-                str = str.concat("[" + stopdata.Lines[i].WaitMessage + "] ");
+                str = str.concat("[" + stopdata.Lines[i].WaitMessage + "]");
 
             }else if(detailed && lf !== undefined){
-                str = str.concat("[T.B.C]");
+                str = str.concat("[" + this.computeWaitingTime(lf) + "]");
 
             }else if(detailed){
                 str = str.concat("[N.D.]");
 
             }
 
-            str = str.concat(l.LineCode + ": " + l.LineDescription + " ");
+            str = str.concat(" " + l.LineCode + ": " + l.LineDescription + " ");
 
             if(lf !== undefined && lf.current.length > 0){
                 str = str.concat( "\n<i>(" + lf.current + ")</i>\n");
@@ -114,7 +114,7 @@ module.exports = {
         var nh = h+1;
         if(nh === 21) {
             //We need to switch the the day after
-            n = n.setDate(n.getDate() + 1);
+            n = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
             if (this.isHoliday(n) || n.getDay() === 0) {
                 //Sunday or holiday
                 t = timetable.TimeSchedules[2];
@@ -131,9 +131,28 @@ module.exports = {
 
         retObj.next = (t.Schedule[nh].NightDetail.trim() + " " + t.Schedule[nh].ScheduleDetail.trim()).trim().replace('Ogni', 'Every');
 
-
         return retObj;
     },
+
+    computeWaitingTime: function(timetable){
+        //TODO!
+        return "TODO"
+        /*var c = timetable.current;
+
+        if(c.length == 0){
+            return "no.serv.";
+        }
+
+        var m = [];
+
+        if(c.startsWith("Every")){
+            var f = parseInt( (c.split("'")[0]).split(" ")[1] );
+            for(var i = 0; i < 60; i = i*)
+        }else{
+
+        }*/
+    },
+
 
     isHoliday: function(date){
         //TODO

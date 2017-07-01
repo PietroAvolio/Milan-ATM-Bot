@@ -129,7 +129,7 @@ function handleCommand(command, sender, param){
         case "_searchStops":
             atmRetriever.getStopsByNameOrCustomerCode(param, function(stops){
                 if(stops === undefined){
-                    telegramSender.message("I can't find any stop 😔", sender);
+                    telegramSender.message("I can't find any stop looking for _" + param + "_😔", sender);
                     chatPendingCommands[sender] = "_searchStop";
 
                 }else if(stops.length === 1){
